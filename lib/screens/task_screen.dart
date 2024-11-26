@@ -1,28 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import '../components/widgets/tasks_list.dart';
+import '../provider/task_data.dart';
 import 'add_task.dart';
 
-class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key});
-
-  @override
-  State<TasksScreen> createState() => _TasksScreenState();
-}
-
-class _TasksScreenState extends State<TasksScreen> {
-  List<String> tasks = [];
-
-  void addTask(String newTask) {
-    setState(() {
-      tasks.add(newTask);
-    });
-    Navigator.pop(context); // Close the modal bottom sheet
-  }
-
-  Widget buildBottomSheet(BuildContext context) {
-    return AddTask(onAdd: addTask);
-  }
-
+class TasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,15 +14,14 @@ class _TasksScreenState extends State<TasksScreen> {
         onPressed: () {
           showModalBottomSheet(
             context: context,
-            builder: buildBottomSheet,
             isScrollControlled: true,
+            builder: (context) => const AddTask(
+              height: 450,
+            ),
           );
         },
         backgroundColor: Colors.lightBlue,
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+        child: Icon(Icons.add, color: Colors.white),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,11 +50,8 @@ class _TasksScreenState extends State<TasksScreen> {
                   ),
                 ),
                 Text(
-                  '${tasks.length} Tasks',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                  ),
+                  '${Provider.of<TaskData>(context).taskCount} Tasks',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ],
             ),
@@ -87,7 +66,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   topRight: Radius.circular(20),
                 ),
               ),
-              child: TasksList(tasks: tasks),
+              child: TasksList(),
             ),
           ),
         ],

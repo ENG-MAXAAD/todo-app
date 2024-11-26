@@ -1,64 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../provider/task_data.dart';
 
 class AddTask extends StatelessWidget {
-  final Function(String) onAdd;
+  final double? height;
 
-  const AddTask({super.key, required this.onAdd});
-
+  const AddTask({super.key, this.height});
   @override
   Widget build(BuildContext context) {
-    String newTask = '';
+    String newTaskTitle = '';
 
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets, // Adjust for keyboard
-      child: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Add Task',
-              style: TextStyle(
-                color: Colors.lightBlueAccent,
-                fontSize: 24,
-                fontWeight: FontWeight.w400,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Container(
+          height: height,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title
+              Text(
+                'Add Task',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 30, color: Colors.lightBlueAccent),
               ),
-              textAlign: TextAlign.center,
-            ),
-            TextField(
-              autofocus: true,
-              textAlign: TextAlign.center,
-              onChanged: (value) {
-                newTask = value;
-              },
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(Colors.lightBlueAccent),
-                padding: MaterialStateProperty.all(
-                  EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              SizedBox(height: 20),
+              // Input Field
+              TextField(
+                autofocus: true,
+                textAlign: TextAlign.center,
+                onChanged: (newText) {
+                  newTaskTitle = newText;
+                },
+                decoration: InputDecoration(
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.lightBlueAccent),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.lightBlueAccent),
+                  ),
+                  hintText: "Enter task...",
                 ),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1),
+              ),
+              SizedBox(height: 20),
+              // Add Task Button
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.lightBlueAccent,
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
+                onPressed: () {
+                  if (newTaskTitle.isNotEmpty) {
+                    Provider.of<TaskData>(context, listen: false)
+                        .addTask(newTaskTitle);
+                    Navigator.pop(context); // Close modal
+                  }
+                },
+                child: Text(
+                  'Add Task',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
               ),
-              onPressed: () {
-                if (newTask.isNotEmpty) {
-                  onAdd(newTask);
-                }
-              },
-              child: Text(
-                'Add Task',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
