@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/task_service.dart';
+import '../../models/task.dart';
+import '../../services/task_service.dart';
 
-class AddTask extends StatelessWidget {
+class EditTask extends StatelessWidget {
+  final Task task;
+
+  EditTask({required this.task});
+
   @override
   Widget build(BuildContext context) {
-    String newTaskTitle = '';
+    String updatedTaskTitle = task.name;
 
     return SingleChildScrollView(
       child: Container(
@@ -19,7 +24,7 @@ class AddTask extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Add Task',
+              'Edit Task',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 30, color: Colors.lightBlueAccent),
             ),
@@ -27,11 +32,12 @@ class AddTask extends StatelessWidget {
             TextField(
               autofocus: true,
               textAlign: TextAlign.center,
+              // initialValue: task.name, // Pre-fill with current task name
               onChanged: (newText) {
-                newTaskTitle = newText;
+                updatedTaskTitle = newText;
               },
               decoration: InputDecoration(
-                hintText: 'Enter task...',
+                hintText: 'Update task name...',
               ),
             ),
             SizedBox(height: 20),
@@ -40,14 +46,14 @@ class AddTask extends StatelessWidget {
                 backgroundColor: Colors.lightBlueAccent,
               ),
               onPressed: () {
-                if (newTaskTitle.isNotEmpty) {
-                  Provider.of<TaskData>(context, listen: false)
-                      .addTask(newTaskTitle); // Add task
-                  Navigator.pop(context); // Close modal
+                if (updatedTaskTitle.isNotEmpty) {
+                  Provider.of<TaskData>(context, listen: false).updateTaskName(
+                      task, updatedTaskTitle); // Update task name
+                  Navigator.pop(context); // Close the dialog
                 }
               },
               child: Text(
-                'Add',
+                'Update',
                 style: TextStyle(color: Colors.white),
               ),
             ),
