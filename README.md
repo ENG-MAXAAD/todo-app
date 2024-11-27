@@ -1,16 +1,29 @@
-# todo_app
+# Todoey - A Flutter To-Do App
 
-A new Flutter project.
+## 📝 Overview
+Todoey is a simple and efficient to-do list app built with **Flutter**. It allows users to manage their tasks effectively, providing features such as task creation, editing, deletion, and searching. The app uses **Hive** for local data persistence, ensuring tasks are saved even after the app is closed. 
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🚀 Features
+- **Add Tasks**: Quickly add new tasks using an intuitive input field.
+- **Edit Tasks**: Modify task names to keep your to-do list updated.
+- **Delete Tasks**: Long-press on a task to delete it with a confirmation dialog.
+- **Mark Tasks as Complete**: Use checkboxes to mark tasks as done.
+- **Search Tasks**: Filter tasks by name using the search bar.
+- **Persistent Storage**: All tasks are stored locally using Hive.
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🛠️ Tech Stack
+- **Flutter**: Frontend development framework.
+- **Hive**: Lightweight NoSQL database for persistent local storage.
+- **Provider**: State management.
+- **ArtSweetAlert**: Custom confirmation dialogs.
+- **Material Design**: Ensures a consistent and beautiful UI.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 📂 Project Structure
+The project is organized into the following folders:
+
