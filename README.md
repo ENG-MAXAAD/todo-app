@@ -27,3 +27,19 @@ Todoey is a simple and efficient to-do list app built with **Flutter**. It allow
 ## 📂 Project Structure
 The project is organized into the following folders:
 
+
+
+---
+
+## ⚡ Quick Start
+
+### 1. Prerequisites
+- Install [Flutter](https://flutter.dev/docs/get-started/install) and set it up.
+- Install [Hive CLI](https://docs.hivedb.dev/#/).
+
+### 2. Clone the Repository
+```bash
+git clone https://github.com/yourusername/todoey.git
+cd todoey
+
+
