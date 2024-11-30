@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/utils/custom_text.dart';
 import '../components/widgets/tasks_list.dart';
 import '../services/task_service.dart';
 import 'add_task.dart';
@@ -28,18 +29,14 @@ class TasksScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Todoey',
-                  style: TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                CustomText(
+                  text: 'Todoey',
+                  type: TextType.header,
                 ),
-                Text(
-                  '${Provider.of<TaskData>(context).taskCount} Tasks',
+                CustomText(
+                  text: '${Provider.of<TaskData>(context).taskCount} Tasks',
+                  type: TextType.subtitle,
                   style: TextStyle(
-                    fontSize: 18,
                     color: Colors.white70,
                   ),
                 ),

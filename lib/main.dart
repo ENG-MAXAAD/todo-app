@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/screens/authentications/login.dart';
 import 'package:todo_app/screens/task_screen.dart';
 import 'package:todo_app/services/task_service.dart';
 
@@ -32,7 +33,7 @@ class TodoApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.theme,
-        home: TasksScreen(),
+        home: LoginScreen(),
       ),
     );
   }

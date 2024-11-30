@@ -1,3 +1,4 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 
 class TasksTile extends StatelessWidget {
@@ -18,28 +19,26 @@ class TasksTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: editCallback,
+      onTap: () {},
       onLongPress: () {
-        showDialog(
+        // Directly use ArtSweetAlert.show
+        ArtSweetAlert.show(
           context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text("Delete Task"),
-            content: Text("Are you sure you want to delete this task?"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx); // Close dialog
-                },
-                child: Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (longPressCallback != null) longPressCallback!();
-                  Navigator.pop(ctx); // Close dialog
-                },
-                child: Text("Delete"),
-              ),
-            ],
+          artDialogArgs: ArtDialogArgs(
+            title: "Delete Task",
+            type: ArtSweetAlertType.warning,
+            text: "Are you sure you want to delete this task?",
+            confirmButtonText: "Delete",
+            confirmButtonColor: Colors.red,
+            cancelButtonText: "Cancel",
+            showCancelBtn: true,
+            onConfirm: () {
+              if (longPressCallback != null) longPressCallback!();
+              Navigator.pop(context); // Close the dialog
+            },
+            onCancel: () {
+              Navigator.pop(context); // Close the dialog
+            },
           ),
         );
       },
@@ -49,10 +48,24 @@ class TasksTile extends StatelessWidget {
           decoration: isChecked ? TextDecoration.lineThrough : null,
         ),
       ),
-      trailing: Checkbox(
-        activeColor: Colors.lightBlueAccent,
-        value: isChecked,
-        onChanged: checkboxCallback,
+      trailing: SizedBox(
+        width: 100, // Adjust the width to fit your design
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            GestureDetector(
+              onTap: editCallback,
+              child: Image.asset(
+                'assets/Images/edit.png',
+              ),
+            ),
+            Checkbox(
+              activeColor: Colors.lightBlueAccent,
+              value: isChecked,
+              onChanged: checkboxCallback,
+            ),
+          ],
+        ),
       ),
     );
   }
