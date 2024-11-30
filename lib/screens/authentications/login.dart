@@ -1,15 +1,103 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:todo_app/screens/authentications/sign_up.dart';
-import 'package:todo_app/screens/task_screen.dart';
-import '../../components/header/app_bar.dart';
-import '../../components/widgets/custom_succes.dart';
-import '../../components/widgets/custom_textfield.dart';
-import '../../components/widgets/social_media_links.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:todo_app/screens/task_screen.dart'; // Screen to navigate on successful login
 
-class LoginScreen extends StatelessWidget {
+import '../../components/header/app_bar.dart';
+import '../../components/widgets/custom_textfield.dart';
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  // Controllers to manage the text field inputs
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _isLoading = false; // Loading state for UI feedback
+
+  // Function to handle user login
+  Future<void> _login() async {
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
+
+    // Validate input fields
+    if (email.isEmpty || password.isEmpty) {
+      _showErrorDialog("Please enter both email and password.");
+      return;
+    }
+
+    // Set loading state to show progress indicator
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Send POST request to the backend server for login
+      final response = await http.post(
+        Uri.parse(
+            'http://192.168.7.117:9000/user/login'), // Replace with your server's login endpoint
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      // Check server response
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+
+        // Check if login was successful
+        if (responseData['status'] == 'Success') {
+          // Navigate to the task screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => TasksScreen()),
+          );
+        } else {
+          _showErrorDialog(responseData['message'] ?? 'Login failed.');
+        }
+      } else {
+        _showErrorDialog('Server error: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle network or other errors
+      _showErrorDialog('An error occurred. Please try again.');
+    } finally {
+      // Hide loading state after request completes
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  // Function to show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Text("Okay"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,154 +110,81 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // const SizedBox(height: 30),
+            // Email text field
             CustomTextField(
+              controller: _emailController,
               hintText: 'Enter your email',
               icon: Icons.email_outlined,
             ),
             const SizedBox(height: 16),
+
+            // Password text field
             CustomTextField(
+              controller: _passwordController,
               hintText: 'Enter your password',
               icon: Icons.lock_outline,
-              hasSuffixIcon: true,
               isPassword: true,
             ),
-            const SizedBox(height: 0),
+            const SizedBox(height: 16),
+
+            // Forgot password link (optional)
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => const ResetPassword()),
-                  // );
+                  // Navigate to Reset Password screen if implemented
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordScreen()));
                 },
                 child: Text(
                   'Forgot Password?',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: const Color(0xff2563EB),
-                  ),
+                  style:
+                      GoogleFonts.inter(fontSize: 14, color: Color(0xff2563EB)),
                 ),
               ),
             ),
-            // const SizedBox(height: 10),
+
+            // Login button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (_) => SuccessBottomSheet(
-                      title: "Congratulations!",
-                      message: "You have successfully completed the login.",
-                      buttonText: "Continue",
-                      onButtonPressed: () {
-                        Navigator.pop(context); // Close modal
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (contex) => TasksScreen()));
-                      },
-                      checkmarkImagePath: 'assets/Images/badge-check.png',
-                    ),
-                  );
-                },
+                onPressed: _isLoading ? null : _login,
+                child: _isLoading
+                    ? CircularProgressIndicator()
+                    : Text('Log In', style: GoogleFonts.inter(fontSize: 16)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: Text(
-                  "Login",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                  backgroundColor: Color(0xff2563EB),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
             ),
+
+            // Sign up link
             const SizedBox(height: 16),
             Center(
-              child: Text.rich(
-                TextSpan(
-                  text: "Don't have an account? ",
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xff7B7D82),
-                  ),
+              child: RichText(
+                text: TextSpan(
+                  text: 'Don\'t have an account? ',
+                  style: GoogleFonts.inter(fontSize: 14, color: Colors.black),
                   children: [
                     TextSpan(
-                      text: "Sign Up",
+                      text: 'Sign up',
                       style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: Color(0xFF2563EB),
-                      ),
+                          fontSize: 14, color: Color(0xff2563EB)),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpScreen(),
-                            ),
-                          );
+                          // Navigate to the Sign Up screen
+                          // Navigator.pushReplacement(
+                          //   context,
+                          //   MaterialPageRoute(builder: (context) => SignUpScreen()),
+                          // );
                         },
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 48),
-            Row(
-              children: [
-                Expanded(
-                  child: Divider(
-                    color: Color(0xffE9E9EA),
-                    thickness: 1,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    "OR",
-                    style: GoogleFonts.inter(
-                        color: Color(0xffD3D4D5),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16),
-                  ),
-                ),
-                Expanded(
-                  child: Divider(
-                    color: Color(0xffE9E9EA),
-                    thickness: 1,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SocialLoginButton(
-              imageUrl: 'assets/Images/apple2.png',
-              label: 'Continue with Apple',
-              onPressed: () {},
-            ),
-            const SizedBox(height: 16),
-            SocialLoginButton(
-              imageUrl: 'assets/Images/f.png',
-              label: 'Continue with Facebook',
-              onPressed: () {},
-            ),
-            const SizedBox(height: 16),
-            SocialLoginButton(
-              imageUrl: 'assets/Images/google.png',
-              label: 'Continue with Google',
-              onPressed: () {},
             ),
           ],
         ),

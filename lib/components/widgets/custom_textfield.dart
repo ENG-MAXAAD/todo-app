@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomTextField extends StatefulWidget {
   final String hintText;
@@ -7,6 +6,7 @@ class CustomTextField extends StatefulWidget {
   final IconData icon;
   final bool isPassword;
   final bool hasSuffixIcon;
+  final TextEditingController controller;
 
   const CustomTextField({
     Key? key,
@@ -15,6 +15,7 @@ class CustomTextField extends StatefulWidget {
     required this.icon,
     this.isPassword = false,
     this.hasSuffixIcon = false,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -65,25 +66,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
           height: 5,
         ),
         TextField(
+          controller: widget.controller,
           focusNode: _focusNode,
           obscureText: _isObscure,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: GoogleFonts.inter(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Color(0xffA7A8AC),
-            ),
-            prefixIcon: Icon(
-              widget.icon,
-              color: _isFocused ? const Color(0xff2563EB) : Colors.grey,
-            ),
-            suffixIcon: widget.hasSuffixIcon
+            prefixIcon: Icon(widget.icon),
+            suffixIcon: widget.isPassword && widget.hasSuffixIcon
                 ? IconButton(
                     icon: Icon(
-                      _isObscure ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.grey,
-                    ),
+                        _isObscure ? Icons.visibility_off : Icons.visibility),
                     onPressed: () {
                       setState(() {
                         _isObscure = !_isObscure;
@@ -91,21 +83,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     },
                   )
                 : null,
-            filled: true,
-            fillColor: Color(0xFFF9FAFB),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(48),
-              borderSide: BorderSide(color: Colors.red, width: 1.0),
+              borderRadius: BorderRadius.circular(12),
+              borderSide:
+                  BorderSide(color: _isFocused ? Colors.blue : Colors.grey),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(48),
-              borderSide: BorderSide(color: Color(0xffE5E7EB), width: 1.0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(48),
-              borderSide: BorderSide(color: Color(0xff2563EB), width: 1.0),
-            ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
           ),
         ),
       ],
